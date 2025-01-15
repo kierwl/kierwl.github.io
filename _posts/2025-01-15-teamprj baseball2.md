@@ -208,18 +208,95 @@ else if (Array.Exists(targetNumber, x => x == userGuess[i]))
      Congratulations! You've guessed the number in 5 attempts.
      ```
 
-------
 
-### **게임 사용 방법**
-
-1. Visual Studio 또는 다른 C# IDE에서 새 콘솔 프로젝트를 생성합니다.
-2. 위 코드를 복사하여 붙여넣습니다.
-3. 프로그램을 실행합니다.
-4. 화면에 나오는 안내에 따라 3자리 숫자를 입력하며 정답을 맞추세요.
 
 ----
 
 ```
+using System;
+
+class NumberBaseballGame
+{
+    static void Main()
+    {
+        Random random = new Random();
+        int[] targetNumber = GenerateTargetNumber(random); // 랜덤숫자 생성
+        int attempts = 0; //도전회수
+        bool guessedCorrectly = false; // 숫자의 정답여부
+
+        Console.WriteLine("Start Number Baseball Game!");
+        Console.WriteLine("Try to guess the 3-digit number. The digits are unique.");
+
+        while (!guessedCorrectly)// 정답이 아니라면 계속 반복
+        {
+            attempts++; // 도전 회차 증가
+            Console.Write("Enter your guess (3 unique digits): ");
+            string input = Console.ReadLine();//입력된 문자열 읽어오기
+            int[] userGuess; //유저가 입력한 배열로 등록
+
+            if (!IsValidGuess(input, out userGuess)) // 입력된 데이터가 숫자가 아닌경우
+            {
+                Console.WriteLine("Invalid input. Please enter exactly 3 unique digits.");
+                continue;
+            }
+
+            int strikes = 0, balls = 0; // 0으로 초기화
+            for (int i = 0; i < 3; i++) // 자릿수 선정
+            {
+                if (userGuess[i] == targetNumber[i]) // 입력된 숫자의 위치와 숫자가 일치하는 경우
+                {
+                    strikes++;
+                }
+                else if (Array.Exists(targetNumber, x => x == userGuess[i])) //선택한 배열이 숫자가 일치하는지 확인 조건을 만족하면 true값
+                {
+                    balls++;
+                }
+            }
+
+            Console.WriteLine($"{strikes} Strike(s), {balls} Ball(s)");
+
+            if (strikes == 3)// 3개전부 일치하는 경우
+            {
+                guessedCorrectly = true;
+                Console.WriteLine($"Congratulations! You've guessed the number in {attempts} attempts.");
+            }
+        }
+    }
+
+    // 고유한 숫자로 구성된 3자리 숫자를 생성
+    static int[] GenerateTargetNumber(Random random) // 랜덤 숫자 생성
+    {
+        int[] number = new int[3];// 배열에 3입력 (0,1,2)
+        for (int i = 0; i < 3; i++)
+        {
+            int digit;
+            do
+            {
+                digit = random.Next(0, 10); // 0부터 9까지
+            } while (Array.Exists(number, x => x == digit)); // 중복 숫자가 없도록 확인하고 다시 시도
+            number[i] = digit; // number라는 배열안의 i번에 수를 집어넣음
+        }
+        return number;
+    }
+
+    // 사용자 입력을 유효성 검사하고 정수 배열로 변환
+    static bool IsValidGuess(string input, out int[] guess)
+    {
+        guess = new int[3];
+        if (input.Length != 3 || !int.TryParse(input, out _)) // 입력이 3자리 숫자인지 확인
+        {
+            return false;
+        }
+
+        for (int i = 0; i < 3; i++)// 유니코드변환 (3= 51)(0 = 48)>> 51- 48 =3
+        {
+            guess[i] = input[i] - '0';
+        }
+
+        // 고유한 숫자인지 확인
+        return guess.Length == 3 && guess[0] != guess[1] && guess[1] != guess[2] && guess[0] != guess[2]; // 하드코딩 >> Hashset을 사용하여 대체가능
+    }
+}
 
 ```
 
