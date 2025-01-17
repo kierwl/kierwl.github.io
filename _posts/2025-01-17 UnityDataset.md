@@ -324,3 +324,9 @@ private void OnApplicationPause(bool pause)
 	Debug.LogError($"GameInstance OnApplicationPause {pause}");
 }
 ```
+
+
+
+
+
+출처 : https://algorfati.tistory.com/170
