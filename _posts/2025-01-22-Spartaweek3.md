@@ -3,7 +3,7 @@ layout: single
 comments: true
 title: "본캠프 3일차 TIL "
 categories: TIL
-tags: [C#,Unity,#내일배움캠프, #스파르타내일배움캠프, #스파르타내일배움캠프TIL]
+tags: [C#,Unity,#sparta]
 
 ---
 
