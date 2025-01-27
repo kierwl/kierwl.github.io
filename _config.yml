@@ -115,7 +115,7 @@ analytics:
 author:
   name             : "Kierwl"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
-  bio              : "I am an **amazing** person."
+  bio              : "개발 블로그"
   location         : "Somewhere"
   email            :
   links:
@@ -317,11 +317,11 @@ defaults:
       path: ""
       type: posts
     values:
-      layout: single
+      layout: single 
       author_profile: true
-      read_time: false
+      read_time: true
       comments:  true
       share: true
       related: true
       show_date: true
-      future:true
+      
