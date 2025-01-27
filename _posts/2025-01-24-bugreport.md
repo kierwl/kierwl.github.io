@@ -3,7 +3,6 @@ layout: single
 comments: true
 title: " 본캠프 5일차 TIL "
 categories: TIL
-tags: [C#,Unity,#sparta]
 
 
 ---
