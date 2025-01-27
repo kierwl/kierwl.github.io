@@ -3,8 +3,6 @@ layout: single
 comments: true
 title: " 본캠프 5일차 TIL "
 categories: TIL
-
-
 ---
 
 ### 📆 오늘의 TIL (Today I Learned)
