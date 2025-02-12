@@ -1,7 +1,7 @@
 ---
 layout: single
 comments: true
-title: "While문과 break "
+title: "정렬 알고리즘 "
 categories: TIL
 ---
 
