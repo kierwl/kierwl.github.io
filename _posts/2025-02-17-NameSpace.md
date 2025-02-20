@@ -116,7 +116,7 @@ categories: TIL
   또는 **네임스페이스 없이 직접 호출**할 수도 있음.
 
   ```
-  csharp복사편집void Start() {
+  void Start() {
       Game.Player player = new Game.Player();
       player.Move();
   }
