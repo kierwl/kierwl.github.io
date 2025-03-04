@@ -1,37 +1,20 @@
 ---
 layout: archive
-title: "홈"
 ---
 
-<header class="hero">
-  <h1>Welcome to My Blog</h1>
-  <p>Jekyll로 만든 깔끔한 블로그</p>
-</header>
+{{ content }}
 
-<section class="recent-posts">
-  <h2>📌 최근 게시글</h2>
-  <ul>
-    {% for post in site.posts limit:5 %}
-      <li>
-        <a href="{{ post.url }}">{{ post.title }}</a>
-        <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
-      </li>
-    {% endfor %}
-  </ul>
-  <a href="/blog" class="btn">더 보기</a>
-</section>
+<h3 class="archive__subtitle">{{ site.data.ui-text[site.locale].recent_posts | default: "Recent Posts" }}</h3>
 
-<section class="tags">
-  <h2>🏷️ 태그 목록</h2>
-  <ul>
-    {% for tag in site.tags %}
-      <li><a href="/tag/{{ tag[0] | slugify }}">{{ tag[0] }} ({{ tag[1] | size }})</a></li>
-    {% endfor %}
-  </ul>
-</section>
+{% if paginator %}
+  {% assign posts = paginator.posts %}
+{% else %}
+  {% assign posts = site.posts %}
+{% endif %}
 
-<section class="about">
-  <h2>👤 About Me</h2>
-  <p>이 블로그는 개발과 IT 관련 내용을 공유하는 공간입니다. 다양한 기술과 프로젝트를 다루고 있습니다.</p>
-</section>
+{% assign entries_layout = page.entries_layout | default: 'list' %}
+<div class="entries-{{ entries_layout }}">
+  {% include documents-collection.html entries=posts type=entries_layout %}
+</div>
+
 {% include paginator.html %}
