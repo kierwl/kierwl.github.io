@@ -1,0 +1,7 @@
+<ul>
+  {% for header in page.content | split: '<h2>' %}
+    {% if forloop.first == false %}
+      <li><a href="#{{ header | strip_html | slugify }}">{{ header | strip_html }}</a></li>
+    {% endif %}
+  {% endfor %}
+</ul>
