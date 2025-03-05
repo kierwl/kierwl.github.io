@@ -1,7 +1,7 @@
 ---
 layout: single
 comments: true
-title: " 델리게이터 "
+title: " 스크립터블 오브젝트 "
 categories: TIL
 ---
 
