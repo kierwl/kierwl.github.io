@@ -1,7 +1,7 @@
 ---
 layout: single
 comments: true
-title:  "가비지컬렉터"
+title:  "애니메이션 컨트롤러와 상태머신"
 excerpt: "코드 학습"
 categories: 
 - 유니티
@@ -13,225 +13,168 @@ toc_label: 개인학습
 toc: true
 toc_sticky: true
  
-date: 2025-03-26
-last_modified_at: 2025-03-26
+date: 2025-03-27
+last_modified_at: 2025-03-27
 ---
 
 ### 📆 오늘의 TIL (Today I Learned)
 
-## 가비지 컬렉터(Garbage Collector)란?
-
-가비지 컬렉터(Garbage Collector, GC)는 프로그래밍에서 동적으로 할당된 메모리를 자동으로 관리하는 기능이다. 개발자가 명시적으로 메모리를 해제하지 않아도, 사용되지 않는 객체를 찾아 해제하여 메모리 누수를 방지한다.
-
-### 1. **가비지 컬렉션의 필요성**
-
-- 동적으로 할당된 객체가 더 이상 필요하지 않을 경우, 해당 메모리를 수동으로 해제해야 한다.
-- 하지만 사람이 직접 메모리를 관리하면 **메모리 누수(memory leak)**나 **댕글링 포인터(dangling pointer)** 문제가 발생할 수 있다.
-- 이를 해결하기 위해 **GC는 필요 없는 객체를 자동으로 정리하여 메모리 관리를 최적화**한다.
-
-### 2. **가비지 컬렉션 동작 방식**
-
-GC는 기본적으로 **더 이상 참조되지 않는 객체**를 찾아서 메모리에서 해제하는 방식으로 동작한다. 주요 방식은 다음과 같다.
-
-#### ① **참조 카운팅(Reference Counting)**
-
-- 객체가 몇 개의 참조를 받고 있는지 추적하는 방식
-- 참조 카운트가 0이 되면 자동으로 해제
-- 단점: **순환 참조(circular reference) 문제**가 발생할 수 있음
-
-#### ② **마크 앤 스위프(Mark and Sweep)**
-
-- 루트 객체(전역 변수, 스택의 지역 변수 등)에서 도달할 수 있는 객체를 **마킹(marking)**
-- 마킹되지 않은 객체를 **스위핑(sweeping, 삭제)**하여 메모리를 정리
-- 단점: **일시적인 성능 저하** 발생
-
-#### ③ **카피 컬렉션(Copy Collection)**
-
-- 객체를 두 개의 메모리 영역(예: 새 공간과 오래된 공간)으로 나눠서 관리
-- 객체를 한쪽으로 복사하면서 필요 없는 객체를 자연스럽게 제거
-- 단점: **메모리 낭비가 발생**할 수 있음
-
-#### ④ **세대별 가비지 컬렉션(Generational GC)**
-
-- 객체의 수명을 기준으로 **Young Generation(신생 객체), Old Generation(오래된 객체)** 등으로 구분
-- 신생 객체는 자주 수집하고, 오래된 객체는 적게 수집하여 성능 최적화
-- 대표적인 방식: **JVM의 G1 GC, .NET의 GC**
-
-### 3. **언어별 가비지 컬렉션**
-
-| 언어       | GC 사용 여부 | 주요 방식                                      |
-| ---------- | ------------ | ---------------------------------------------- |
-| Java       | O            | JVM의 G1 GC, ZGC 등                            |
-| C#         | O            | .NET GC (세대별 GC)                            |
-| Python     | O            | 참조 카운팅 + Mark and Sweep                   |
-| JavaScript | O            | V8 엔진의 세대별 GC                            |
-| C/C++      | X            | 수동 메모리 관리 (`malloc/free`, `new/delete`) |
-
-### 4. **GC 최적화 방법**
-
-- **불필요한 객체 참조 해제**: 사용이 끝난 객체는 `null` 할당
-- **큰 객체의 할당 최소화**: 큰 객체는 Old Generation으로 이동 가능성이 높아 GC 부담 증가
-- **WeakReference 활용**: 강한 참조를 피하고, 필요할 때만 객체 유지
 
 
+## 애니메이션 컨트롤러의 주요 구성요소
 
-📌 **오늘의 키포인트**
+1. **상태(State)**: 각각의 애니메이션 클립을 나타냅니다. 예를 들어 '대기', '걷기', '뛰기' 등의 상태가 있을 수 있습니다.
+2. **전이(Transition)**: 한 상태에서 다른 상태로 전환하는 조건을 정의합니다.
+3. **파라미터(Parameter)**: 전이 조건을 제어하는 변수입니다. float, int, bool, trigger 타입이 있습니다.
+4. **레이어(Layer)**: 여러 애니메이션을 동시에 재생할 수 있게 해주는 기능입니다. 예를 들어 상체와 하체의 애니메이션을 분리할 수 있습니다.
+5. **블렌드 트리(Blend Tree)**: 여러 애니메이션을 부드럽게 혼합할 수 있는 도구입니다.
 
-- GC는 메모리 자동 관리 시스템으로, 명시적인 `free()` 없이도 동작한다.
-- 세대별 GC가 성능 최적화에 많이 사용된다.
-- GC를 효율적으로 사용하려면 불필요한 객체 참조를 줄이는 것이 중요하다.
+## 스테이트 머신의 작동 방식
 
+애니메이션 컨트롤러의 스테이트 머신은 다음과 같은 방식으로 작동합니다:
 
+1. 항상 하나의 상태가 현재 활성화된 상태입니다.
+2. 활성화된 상태의 애니메이션이 재생됩니다.
+3. 파라미터 값에 따라 전이 조건이 충족되면 다른 상태로 전환됩니다.
+4. 새 상태의 애니메이션이 재생되기 시작합니다.
 
-### C#에서 가비지 컬렉션(Garbage Collection) 예시
+## 코드에서의 제어
 
-C#에서는 **.NET의 GC (Garbage Collector)**가 자동으로 메모리를 관리해준다.
- GC는 `System.GC` 클래스를 통해 직접 제어할 수도 있지만, **일반적으로는 명시적으로 호출하지 않는 것이 좋다.**
-
-------
-
-### 1️⃣ **기본적인 GC 동작 예시**
+스크립트에서 애니메이션 컨트롤러를 제어하는 방법은 다음과 같습니다:
 
 ```
-using System;
+// Animator 컴포넌트 참조
+Animator animator = GetComponent<Animator>();
 
-class Program
+// 파라미터 설정
+animator.SetBool("isRunning", true);
+animator.SetFloat("Speed", 5.0f);
+animator.SetInteger("WeaponType", 1);
+animator.SetTrigger("Jump");
+
+// 현재 상태 정보 얻기
+AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0); // 0은 레이어 인덱스
+bool isRunning = stateInfo.IsName("Run");
+```
+
+
+
+투사체 애니메이션을 공격모션에 맞게 발사 시키려고 한다.
+
+## 1. 애니메이션 이벤트 활용하기
+
+공격 애니메이션에 특정 시점에 투사체를 생성하고 발사하는 이벤트를 추가하는 것으로 적절한 타이밍에 투사체를 발사 시킬 수 이싿.
+
+1. Unity 애니메이션 창에서 공격 애니메이션을 엽니다.
+2. 투사체가 발사되어야 하는 정확한 프레임에 애니메이션 이벤트를 추가합니다.
+3. 이벤트 함수명을 설정합니다(예: "FireProjectile").
+4. 캐릭터 스크립트에 해당 함수를 구현합니다:
+
+```
+csharp복사public GameObject projectilePrefab;
+public Transform firePoint;
+
+// 애니메이션 이벤트에서 호출됨
+public void FireProjectile()
 {
-    static void Main()
-    {
-        CreateObjects();
-
-        // GC 호출 전 메모리 상태 확인
-        Console.WriteLine($"메모리 사용량 (GC 호출 전): {GC.GetTotalMemory(false)} bytes");
-
-        // 가비지 컬렉터 강제 실행
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-
-        // GC 호출 후 메모리 상태 확인
-        Console.WriteLine($"메모리 사용량 (GC 호출 후): {GC.GetTotalMemory(true)} bytes");
-    }
-
-    static void CreateObjects()
-    {
-        for (int i = 0; i < 10000; i++)
-        {
-            object obj = new object();
-        }
-    }
+    GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+    Rigidbody rb = projectile.GetComponent<Rigidbody>();
+    rb.velocity = firePoint.forward * projectileSpeed;
 }
 ```
 
-🔹 **설명:**
+## 2. 소켓 시스템 사용하기
 
-- `CreateObjects()`에서 10,000개의 `object` 인스턴스를 생성
-- 이후 `GC.Collect()`를 호출하여 명시적으로 가비지 컬렉션 실행
-- `GC.GetTotalMemory(false/true)`를 통해 메모리 사용량을 비교
-
-**결과:**
- GC가 동작하면 불필요한 객체가 제거되고 메모리 사용량이 감소할 수 있다.
-
-------
-
-### 2️⃣ **Finalize()와 GC 동작 예시**
-
-C#에서는 객체가 제거될 때 `Finalize()` 또는 `IDisposable` 패턴을 사용할 수 있다.
+캐릭터 모델의 특정 부위(손, 무기 끝 등)에 빈 게임 오브젝트(소켓)를 자식으로 추가하고, 이 소켓의 위치에서 투사체를 발사합니다.
 
 ```
-using System;
+public Transform weaponSocket;
+public GameObject projectilePrefab;
+private bool isFiring = false;
 
-class MyClass
+void Update()
 {
-    // 소멸자(Finalizer)
-    ~MyClass()
+    // 공격 애니메이션 도중 특정 조건이 만족되면 투사체 발사
+    if (animator.GetCurrentAnimatorStateInfo(0).IsName("Attack") && 
+        animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.5f && 
+        !isFiring)
     {
-        Console.WriteLine("MyClass 객체가 GC에 의해 수거됨!");
+        FireProjectile();
+        isFiring = true;
+    }
+    
+    // 애니메이션이 끝나면 발사 상태 초기화
+    if (!animator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+    {
+        isFiring = false;
     }
 }
 
-class Program
+void FireProjectile()
 {
-    static void Main()
-    {
-        MyClass obj = new MyClass();
-        obj = null; // 객체 참조 제거
-
-        GC.Collect(); // GC 강제 실행
-        GC.WaitForPendingFinalizers(); // 소멸자 실행 대기
-
-        Console.WriteLine("GC 실행 완료");
-    }
+    GameObject projectile = Instantiate(projectilePrefab, weaponSocket.position, weaponSocket.rotation);
+    // 투사체 설정...
 }
 ```
 
-🔹 **설명:**
+## 3. 트레일 렌더러를 이용한 시각적 효과
 
-- `~MyClass()` 소멸자를 정의하여, 객체가 GC에 의해 제거될 때 메시지 출력
-- `obj = null;`로 객체 참조를 해제한 후 `GC.Collect()` 실행
-- `GC.WaitForPendingFinalizers();`를 사용하여 소멸자가 실행될 때까지 대기
-
-**출력 예시:**
+투사체의 경로를 시각화하거나 투사체 자체를 표현할 때 트레일 렌더러를 사용할 수 있습니다.
 
 ```
-MyClass 객체가 GC에 의해 수거됨!
-GC 실행 완료
-```
-
-⚠️ **주의:**
-
-- `Finalize()`는 명시적으로 호출할 수 없으며, GC가 객체를 제거할 때 실행됨
-- **성능 저하 가능성이 있기 때문에 `Dispose()` 패턴을 사용하는 것이 권장됨**
-
-------
-
-### 3️⃣ **IDisposable을 활용한 가비지 컬렉션 관리**
-
-`IDisposable` 인터페이스를 사용하면 `using` 문을 통해 명시적으로 자원을 해제할 수 있다.
-
-```
-using System;
-
-class MyResource : IDisposable
+csharp복사void SetupProjectileVisual(GameObject projectile)
 {
-    public void Use()
-    {
-        Console.WriteLine("리소스 사용 중...");
-    }
-
-    public void Dispose()
-    {
-        Console.WriteLine("리소스 해제됨!");
-        GC.SuppressFinalize(this); // Finalize() 호출 방지
-    }
-}
-
-class Program
-{
-    static void Main()
-    {
-        using (MyResource resource = new MyResource())
-        {
-            resource.Use();
-        } // using 블록이 끝나면 자동으로 Dispose() 호출됨
-
-        Console.WriteLine("GC 실행 전...");
-        GC.Collect();
-        Console.WriteLine("GC 실행 후...");
-    }
+    TrailRenderer trail = projectile.AddComponent<TrailRenderer>();
+    trail.startWidth = 0.1f;
+    trail.endWidth = 0.0f;
+    trail.time = 0.5f; // 트레일이 남아있는 시간
+    // 트레일 머티리얼 설정...
 }
 ```
 
-🔹 **설명:**
+## 4. IK(Inverse Kinematics)를 활용한 정교한 조절
 
-- `IDisposable`을 구현하고 `Dispose()` 메서드에서 자원을 해제
-- `using` 블록을 사용하면 **블록을 벗어날 때 자동으로 `Dispose()` 실행됨**
-- `GC.SuppressFinalize(this);`를 호출하면 **GC가 `Finalize()`를 실행하지 않도록 방지**
-
-**출력 예시:**
+더 복잡한 경우, IK를 사용하여 캐릭터의 손이나 무기가 투사체의 발사 방향을 정확히 가리키도록 할 수 있습니다.
 
 ```
-리소스 사용 중...
-리소스 해제됨!
-GC 실행 전...
-GC 실행 후...
+csharp복사public Transform target;
+
+private void OnAnimatorIK(int layerIndex)
+{
+    // 오른손의 IK 설정
+    animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1f);
+    animator.SetIKPosition(AvatarIKGoal.RightHand, target.position);
+    
+    // 오른손의 회전도 설정 가능
+    animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1f);
+    animator.SetIKRotation(AvatarIKGoal.RightHand, target.rotation);
+}
 ```
+
+## 5. 파티클 시스템 활용
+
+투사체를 파티클 시스템으로 구현하여 애니메이션과 동기화할 수도 있습니다.
+
+```
+csharp복사public ParticleSystem projectileParticleSystem;
+
+public void TriggerProjectileEffect()
+{
+    projectileParticleSystem.Play();
+}
+```
+
+이중 가장 쉽고 효과적인 방법은 애니메이션 프레임에 이벤트로 함수를 호출 하는 것 이었다.
+
+```
+ // 애니메이션 이벤트 수신 메서드
+ public void OnAttackAnimationEventReceived()
+ {
+     if (currentTarget != null) // 타겟이 있을 때만 발사
+     {
+         FireProjectile();
+     }
+ }
+```
+
+를 사용하여 애니메이션이 있는 스크립트에 연결해주면, 애니메이션이 동작 할때마다 특정 프레임에서 이벤트가 호출되게 된다.
