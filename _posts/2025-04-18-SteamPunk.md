@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "압력계 구현하기"
 excerpt: "코드 학습"

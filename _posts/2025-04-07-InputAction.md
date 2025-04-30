@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "플레이어 인풋액션"
 excerpt: "코드 학습"

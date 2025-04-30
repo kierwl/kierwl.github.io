@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "복장 시스템"
 excerpt: "코드 학습"

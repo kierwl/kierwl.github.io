@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "적 충돌 처리"
 excerpt: "코드 학습"

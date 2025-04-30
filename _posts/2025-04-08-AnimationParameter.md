@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "애니메이션 파라미터 트러블 슈팅"
 excerpt: "코드 학습"

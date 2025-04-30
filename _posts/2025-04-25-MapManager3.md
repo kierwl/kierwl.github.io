@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "맵 매니저3"
 excerpt: "코드 학습"

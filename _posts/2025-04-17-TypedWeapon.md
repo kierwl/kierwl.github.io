@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "무기 속성 시스템 트러블 슈팅"
 excerpt: "코드 학습"

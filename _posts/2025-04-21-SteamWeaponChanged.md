@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title:  "무기 속성에 맞는 탄환 발사하기"
 excerpt: "코드 학습"
