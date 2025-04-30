@@ -1,18 +1,16 @@
 ---
 layout: single
 comments: true
-title:  "복장시스템 리팩토링"
-excerpt: "코드 학습"
-categories: 
-- 유니티
-- 스파르타
+title: 복장시스템 리팩토링
+excerpt: 코드 학습
+categories:
+  - 유니티
+  - 스파르타
 tags:
-- TIL
- 
+  - TIL
 toc_label: 팀프로젝트
 toc: true
 toc_sticky: true
- 
 date: 2025-04-30
 last_modified_at: 2025-04-30
 ---
