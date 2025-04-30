@@ -1,5 +1,5 @@
 ---
-layout: single
+layout: post
 comments: true
 title: 복장시스템 리팩토링
 excerpt: 코드 학습
